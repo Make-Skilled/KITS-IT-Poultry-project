@@ -3,9 +3,19 @@ from functools import wraps
 import json
 from web3 import Web3, HTTPProvider
 import random
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
 app.secret_key = 'Poultry'
+
+# Add these constants at the top of your file, after the imports
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
+SMTP_USERNAME = "kr4785543@gmail.com"  # Replace with your email
+SMTP_PASSWORD = "qhuzwfrdagfyqemk"     # Replace with your app password
+ALERT_EMAIL = "sudheerthadikonda0605@poultry.com"       # Replace with owner's email
 
 def connectWithBlockchain(acc):
     web3 = Web3(HTTPProvider('http://127.0.0.1:7545'))
@@ -133,12 +143,63 @@ def logout():
     flash("You have been logged out", "success")
     return redirect(url_for('index'))
 
+def send_alert_email(sensor_type, value, threshold):
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = SMTP_USERNAME
+        msg['To'] = ALERT_EMAIL
+        msg['Subject'] = f"⚠️ Alert: Abnormal {sensor_type} Level Detected"
+
+        # Create email body
+        body = f"""
+        Warning: Abnormal {sensor_type} Level Detected!
+
+        Current {sensor_type}: {value}
+        Normal Range: {threshold}
+
+        Please take immediate action to address this issue.
+
+        This is an automated message from your Poultry Monitoring System.
+        """
+
+        msg.attach(MIMEText(body, 'plain'))
+
+        # Create SMTP session
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server.starttls()
+        server.login(SMTP_USERNAME, SMTP_PASSWORD)
+        
+        # Send email
+        server.send_message(msg)
+        server.quit()
+        
+        print(f"Alert email sent for {sensor_type}")
+        return True
+    except Exception as e:
+        print(f"Failed to send alert email: {e}")
+        return False
+
 @app.route('/api/sensor-data')
 @login_required
 def get_sensor_data():
-    temperature=request.args.get('temperature', type=float, default=25.0)
-    moisture=request.args.get('moisture', type=int, default=60)
-    gas=request.args.get('gas', type=int, default=300)
+    temperature = request.args.get('temperature', type=float, default=35.0)
+    moisture = request.args.get('moisture', type=int, default=80)
+    gas = request.args.get('gas', type=int, default=500)
+    
+    # Define thresholds
+    temp_range = "22°C - 28°C"
+    moisture_range = "50% - 70%"
+    gas_range = "Below 400 ppm"
+
+    # Check status and send alerts if needed
+    if temperature < 22 or temperature > 28:
+        send_alert_email("Temperature", f"{temperature}°C", temp_range)
+    
+    if moisture < 50 or moisture > 70:
+        send_alert_email("Moisture", f"{moisture}%", moisture_range)
+    
+    if gas > 400:
+        send_alert_email("Gas", f"{gas} ppm", gas_range)
     
     data = {
         "temperature": temperature,
