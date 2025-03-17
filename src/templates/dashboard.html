@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Sensor Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-feather text-2xl text-blue-600"></i>
+                    <span class="ml-2 text-2xl font-bold text-gray-800">SmartPoultry</span>
+                </div>
+                <div class="flex items-center space-x-8">
+                    <span class="text-gray-600">Welcome, {{ session['user']['fullname'] }}</span>
+                    <a href="#features" class="text-gray-600 hover:text-blue-600">Features</a>
+                    <a href="#benefits" class="text-gray-600 hover:text-blue-600">Benefits</a>
+                    <a href="/logout" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 flex items-center">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mx-auto px-4 mt-4">
+                {% for category, message in messages %}
+                    <div class="rounded-md p-4 mb-4 {% if category == 'error' %}bg-red-50 text-red-800{% else %}bg-green-50 text-green-800{% endif %} flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i class="fas {% if category == 'error' %}fa-exclamation-circle text-red-400{% else %}fa-check-circle text-green-400{% endif %} mr-3"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                        <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-500">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">IoT Sensor Dashboard</h1>
+            <p class="text-gray-600">Real-time sensor monitoring</p>
+        </div>
+
+        <!-- Sensor Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Temperature Card -->
+            <div id="temperature-card" class="bg-white rounded-lg shadow-md p-6 transition-colors duration-300">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-semibold text-gray-800">Temperature</h2>
+                    <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <div class="mt-4">
+                    <span id="temperature" class="text-4xl font-bold text-gray-900">--.-</span>
+                    <span class="text-2xl text-gray-600">°C</span>
+                </div>
+            </div>
+
+            <!-- Moisture Card -->
+            <div id="moisture-card" class="bg-white rounded-lg shadow-md p-6 transition-colors duration-300">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-semibold text-gray-800">Moisture</h2>
+                    <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                </div>
+                <div class="mt-4">
+                    <span id="moisture" class="text-4xl font-bold text-gray-900">--</span>
+                    <span class="text-2xl text-gray-600">%</span>
+                </div>
+            </div>
+
+            <!-- Gas Card -->
+            <div id="gas-card" class="bg-white rounded-lg shadow-md p-6 transition-colors duration-300">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-semibold text-gray-800">Gas Level</h2>
+                    <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <div class="mt-4">
+                    <span id="gas" class="text-4xl font-bold text-gray-900">---</span>
+                    <span class="text-2xl text-gray-600">ppm</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ThingSpeak Charts -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Temperature Chart -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Temperature History</h2>
+                <iframe width="100%" height="260" style="border: 1px solid #cccccc;" 
+                    src="https://thingspeak.com/channels/YOUR_CHANNEL_ID/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&title=Temperature&type=line">
+                </iframe>
+            </div>
+
+            <!-- Moisture Chart -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Moisture History</h2>
+                <iframe width="100%" height="260" style="border: 1px solid #cccccc;" 
+                    src="https://thingspeak.com/channels/YOUR_CHANNEL_ID/charts/2?bgcolor=%23ffffff&color=%234265f4&dynamic=true&results=60&title=Moisture&type=line">
+                </iframe>
+            </div>
+
+            <!-- Gas Level Chart -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Gas Level History</h2>
+                <iframe width="100%" height="260" style="border: 1px solid #cccccc;" 
+                    src="https://thingspeak.com/channels/YOUR_CHANNEL_ID/charts/3?bgcolor=%23ffffff&color=%23f4b941&dynamic=true&results=60&title=Gas+Level&type=line">
+                </iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateCardStatus(cardId, status) {
+            const card = document.getElementById(cardId);
+            // Remove existing status classes
+            card.classList.remove('bg-white', 'bg-red-50', 'bg-yellow-50', 'bg-green-50');
+            
+            // Add appropriate status class
+            if (status === 'warning') {
+                card.classList.add('bg-red-50');
+            } else {
+                card.classList.add('bg-green-50');
+            }
+        }
+
+        function updateSensorValues() {
+            fetch('/api/sensor-data')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Update values
+                    document.getElementById('temperature').textContent = data.temperature.toFixed(1);
+                    document.getElementById('moisture').textContent = data.moisture;
+                    document.getElementById('gas').textContent = data.gas;
+
+                    // Update card colors based on status
+                    updateCardStatus('temperature-card', data.status.temperature);
+                    updateCardStatus('moisture-card', data.status.moisture);
+                    updateCardStatus('gas-card', data.status.gas);
+                })
+                .catch(error => {
+                    console.error('Error fetching sensor data:', error);
+                });
+        }
+
+        // Update immediately on page load
+        updateSensorValues();
+
+        // Update every 5 seconds
+        setInterval(updateSensorValues, 5000);
+
+        // Handle session expiration
+        document.addEventListener('DOMContentLoaded', function() {
+            const originalFetch = window.fetch;
+            window.fetch = function() {
+                return originalFetch.apply(this, arguments)
+                    .then(response => {
+                        if (response.redirected && response.url.includes('/login')) {
+                            window.location.href = '/login';
+                            return Promise.reject('Session expired');
+                        }
+                        return response;
+                    });
+            };
+        });
+    </script>
+</body>
+</html>

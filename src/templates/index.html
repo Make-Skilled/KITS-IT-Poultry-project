@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Poultry Monitoring System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-feather text-2xl text-blue-600"></i>
+                    <span class="ml-2 text-2xl font-bold text-gray-800">SmartPoultry</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-gray-600 hover:text-blue-600">Features</a>
+                    <a href="#benefits" class="text-gray-600 hover:text-blue-600">Benefits</a>
+                    <a href="/login" class="text-gray-600 hover:text-blue-600">Login</a>
+                    <a href="dashboard.html" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                        Live Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-blue-500 to-blue-700 text-white">
+        <div class="container mx-auto px-6 py-16">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-8 md:mb-0">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4">Smart Poultry Monitoring & Control System</h1>
+                    <p class="text-xl mb-8">Real-time monitoring and control of your poultry environment for optimal bird health and productivity.</p>
+                    <a href="dashboard.html" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100">
+                        Access Dashboard
+                    </a>
+                </div>
+                <div class="md:w-1/2">
+                    <img src="https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400&q=80" 
+                         alt="Modern Poultry Farm" 
+                         class="rounded-lg shadow-xl object-cover">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-12">Key Features</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Real-time Monitoring -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="h-48 mb-4 overflow-hidden rounded-lg">
+                        <img src="https://images.unsplash.com/photo-1592404582225-e0c2982e434f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=300&q=80" 
+                             alt="Monitoring System" 
+                             class="w-full h-full object-cover">
+                    </div>
+                    <div class="text-blue-600 mb-4">
+                        <i class="fas fa-chart-line text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Real-time Monitoring</h3>
+                    <p class="text-gray-600">Track temperature, humidity, and gas levels in real-time for optimal environmental control.</p>
+                </div>
+
+                <!-- Remote Control -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="h-48 mb-4 overflow-hidden rounded-lg">
+                        <img src="https://images.unsplash.com/photo-1586880244406-556ebe35f282?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=300&q=80" 
+                             alt="Remote Control System" 
+                             class="w-full h-full object-cover">
+                    </div>
+                    <div class="text-blue-600 mb-4">
+                        <i class="fas fa-sliders-h text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Remote Control</h3>
+                    <p class="text-gray-600">Control ventilation, heating, and other systems remotely through our web interface.</p>
+                </div>
+
+                <!-- Alert System -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="h-48 mb-4 overflow-hidden rounded-lg">
+                        <img src="https://images.unsplash.com/photo-1590650153855-d9e808231d41?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=300&q=80" 
+                             alt="Alert System" 
+                             class="w-full h-full object-cover">
+                    </div>
+                    <div class="text-blue-600 mb-4">
+                        <i class="fas fa-bell text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Alert System</h3>
+                    <p class="text-gray-600">Receive instant notifications when environmental parameters exceed safe limits.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="benefits" class="bg-gray-100 py-16">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-12">Benefits</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="flex items-start space-x-4">
+                    <div class="text-green-500">
+                        <i class="fas fa-check-circle text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Improved Bird Health</h3>
+                        <p class="text-gray-600">Maintain optimal environmental conditions for better bird health and reduced mortality.</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-4">
+                    <div class="text-green-500">
+                        <i class="fas fa-check-circle text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Increased Productivity</h3>
+                        <p class="text-gray-600">Optimize conditions for maximum growth and egg production.</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-4">
+                    <div class="text-green-500">
+                        <i class="fas fa-check-circle text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Cost Reduction</h3>
+                        <p class="text-gray-600">Reduce energy costs through efficient environmental control systems.</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-4">
+                    <div class="text-green-500">
+                        <i class="fas fa-check-circle text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">24/7 Monitoring</h3>
+                        <p class="text-gray-600">Continuous monitoring and control from anywhere, at any time.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="bg-blue-600 text-white py-16">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold mb-4">Ready to Monitor Your Poultry Farm?</h2>
+            <p class="mb-8 text-xl">Access the dashboard to start monitoring and controlling your farm environment.</p>
+            <a href="dashboard.html" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100">
+                Go to Dashboard
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <span class="text-xl font-bold">SmartPoultry</span>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="hover:text-blue-400">About</a>
+                    <a href="#" class="hover:text-blue-400">Contact</a>
+                    <a href="#" class="hover:text-blue-400">Support</a>
+                </div>
+            </div>
+            <div class="mt-8 text-center text-gray-400">
+                <p>&copy; 2024 SmartPoultry Monitoring System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
