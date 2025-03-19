@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IoT Sensor Dashboard</title>
+    <title>Early Stage (0-2 Weeks) Dashboard - SmartPoultry</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -31,30 +31,10 @@
         </div>
     </nav>
 
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="container mx-auto px-4 mt-4">
-                {% for category, message in messages %}
-                    <div class="rounded-md p-4 mb-4 {% if category == 'error' %}bg-red-50 text-red-800{% else %}bg-green-50 text-green-800{% endif %} flex items-center justify-between">
-                        <div class="flex items-center">
-                            <i class="fas {% if category == 'error' %}fa-exclamation-circle text-red-400{% else %}fa-check-circle text-green-400{% endif %} mr-3"></i>
-                            <span>{{ message }}</span>
-                        </div>
-                        <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-500">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-
     <div class="container mx-auto px-4 py-8">
-        <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-800">IoT Sensor Dashboard</h1>
-            <p class="text-gray-600">Real-time sensor monitoring</p>
+            <h1 class="text-3xl font-bold text-gray-800">Early Stage Monitoring (0-2 Weeks)</h1>
+            <p class="text-gray-600">Optimal conditions: Temperature 32-35°C | Humidity 60-70% | Gas Level <400 ppm</p>
         </div>
 
         <!-- Sensor Cards -->
@@ -71,12 +51,15 @@
                     <span id="temperature" class="text-4xl font-bold text-gray-900">--.-</span>
                     <span class="text-2xl text-gray-600">°C</span>
                 </div>
+                <div class="mt-2 text-sm text-gray-600">
+                    Optimal: 32-35°C
+                </div>
             </div>
 
             <!-- Moisture Card -->
             <div id="moisture-card" class="bg-white rounded-lg shadow-md p-6 transition-colors duration-300">
                 <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-semibold text-gray-800">Moisture</h2>
+                    <h2 class="text-xl font-semibold text-gray-800">Humidity</h2>
                     <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
@@ -84,6 +67,9 @@
                 <div class="mt-4">
                     <span id="moisture" class="text-4xl font-bold text-gray-900">--</span>
                     <span class="text-2xl text-gray-600">%</span>
+                </div>
+                <div class="mt-2 text-sm text-gray-600">
+                    Optimal: 60-70%
                 </div>
             </div>
 
@@ -98,6 +84,9 @@
                 <div class="mt-4">
                     <span id="gas" class="text-4xl font-bold text-gray-900">---</span>
                     <span class="text-2xl text-gray-600">ppm</span>
+                </div>
+                <div class="mt-2 text-sm text-gray-600">
+                    Optimal: <400 ppm
                 </div>
             </div>
 
@@ -146,9 +135,9 @@
 
             <!-- Moisture Chart -->
             <div class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Moisture History</h2>
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Humidity History</h2>
                 <iframe width="100%" height="260" style="border: 1px solid #cccccc;" 
-                    src="https://thingspeak.com/channels/YOUR_CHANNEL_ID/charts/2?bgcolor=%23ffffff&color=%234265f4&dynamic=true&results=60&title=Moisture&type=line">
+                    src="https://thingspeak.com/channels/YOUR_CHANNEL_ID/charts/2?bgcolor=%23ffffff&color=%234265f4&dynamic=true&results=60&title=Humidity&type=line">
                 </iframe>
             </div>
 
@@ -159,46 +148,51 @@
                     src="https://thingspeak.com/channels/YOUR_CHANNEL_ID/charts/3?bgcolor=%23ffffff&color=%23f4b941&dynamic=true&results=60&title=Gas+Level&type=line">
                 </iframe>
             </div>
+
+            <!-- Recommendations -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Early Stage Care Recommendations</h2>
+                <ul class="space-y-2">
+                    <li class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                        Maintain brooding temperature at 32-35°C
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                        Ensure proper ventilation while maintaining warmth
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                        Monitor chick behavior for temperature comfort
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                        Keep humidity between 60-70%
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 
     <script>
         function updateCardStatus(cardId, status) {
             const card = document.getElementById(cardId);
-            // Remove existing status classes
             card.classList.remove('bg-white', 'bg-red-50', 'bg-yellow-50', 'bg-green-50');
-            
-            // Add appropriate status class
-            if (status === 'warning') {
-                card.classList.add('bg-red-50');
-            } else {
-                card.classList.add('bg-green-50');
-            }
+            card.classList.add(status === 'warning' ? 'bg-red-50' : 'bg-green-50');
         }
 
         function updateSensorValues() {
-            fetch('/api/sensor-data')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
+            fetch('/api/sensor-data/early')
+                .then(response => response.json())
                 .then(data => {
-                    // Update values
-                    document.getElementById('temperature').textContent = data.temperature.toFixed(1);
-                    document.getElementById('moisture').textContent = data.moisture;
-                    document.getElementById('gas').textContent = data.gas;
-
-                    // Update card colors based on status
-                    updateCardStatus('temperature-card', data.status.temperature);
-                    updateCardStatus('moisture-card', data.status.moisture);
-                    updateCardStatus('gas-card', data.status.gas);
+                    // Update values and status
+                    updateDisplayValues(data);
                 })
-                .catch(error => {
-                    console.error('Error fetching sensor data:', error);
-                });
+                .catch(error => console.error('Error:', error));
         }
+
+        updateSensorValues();
+        setInterval(updateSensorValues, 60000);
 
         let controlState = false;
         let progressInterval;
@@ -206,15 +200,12 @@
         function updateControlUI(state) {
             const button = document.getElementById('controlButton');
             const progress = document.getElementById('controlProgress');
-            const fanIcon = document.getElementById('fanIcon');
             
             button.textContent = state ? 'Turn OFF' : 'Turn ON';
             button.classList.remove(state ? 'bg-blue-600' : 'bg-red-600');
             button.classList.add(state ? 'bg-red-600' : 'bg-blue-600');
             
-            // Toggle fan spinning animation
             if (state) {
-                fanIcon.classList.add('fan-spinning');
                 let width = 0;
                 clearInterval(progressInterval);
                 progressInterval = setInterval(() => {
@@ -225,7 +216,6 @@
                     progress.style.width = width + '%';
                 }, 100);
             } else {
-                fanIcon.classList.remove('fan-spinning');
                 clearInterval(progressInterval);
                 progress.style.width = '0%';
             }
@@ -234,7 +224,7 @@
         function toggleControl() {
             controlState = !controlState;
             
-            fetch('/toggle_control', {
+            fetch('/toggle_control/early', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -247,35 +237,19 @@
                     updateControlUI(controlState);
                 } else {
                     console.error('Failed to toggle control:', data.error);
-                    controlState = !controlState; // Revert state on failure
+                    controlState = !controlState;
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                controlState = !controlState; // Revert state on error
+                controlState = !controlState;
             });
         }
-
-        // Update immediately on page load
-        updateSensorValues();
-
-        // Update every 5 seconds
-        setInterval(updateSensorValues, 60000);
-
-        // Handle session expiration
-        document.addEventListener('DOMContentLoaded', function() {
-            const originalFetch = window.fetch;
-            window.fetch = function() {
-                return originalFetch.apply(this, arguments)
-                    .then(response => {
-                        if (response.redirected && response.url.includes('/login')) {
-                            window.location.href = '/login';
-                            return Promise.reject('Session expired');
-                        }
-                        return response;
-                    });
-            };
-        });
     </script>
 </body>
 </html>
+
+
+
+
+

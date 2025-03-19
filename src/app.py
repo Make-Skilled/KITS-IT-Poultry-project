@@ -6,6 +6,7 @@ import random
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import requests
 
 app = Flask(__name__)
 app.secret_key = 'Poultry'
@@ -16,6 +17,10 @@ SMTP_PORT = 587
 SMTP_USERNAME = "kr4785543@gmail.com"  # Replace with your email
 SMTP_PASSWORD = "qhuzwfrdagfyqemk"     # Replace with your app password
 ALERT_EMAIL = "sudheerthadikonda0605@poultry.com"       # Replace with owner's email
+
+# ThingSpeak Configuration
+WRITE_URL = "https://api.thingspeak.com/update"
+OUTPUT_WRITE_API_KEY = "SJPIKXSQ27L3H5K2"  # Replace with your actual API key
 
 def connectWithBlockchain(acc):
     web3 = Web3(HTTPProvider('http://127.0.0.1:7545'))
@@ -51,6 +56,21 @@ def index():
 @login_required
 def dashboard():
     return render_template('dashboard.html')
+
+@app.route('/dashboard/early')
+@login_required
+def dashboard_early():
+    return render_template('dashboard_early.html')
+
+@app.route('/dashboard/mid')
+@login_required
+def dashboard_mid():
+    return render_template('dashboard_mid.html')
+
+@app.route('/dashboard/late')
+@login_required
+def dashboard_late():
+    return render_template('dashboard_late.html')
 
 @app.route("/register")
 def register():
@@ -179,39 +199,104 @@ def send_alert_email(sensor_type, value, threshold):
         print(f"Failed to send alert email: {e}")
         return False
 
-@app.route('/api/sensor-data')
+@app.route('/api/sensor-data', methods=['GET', 'POST'])
+@app.route('/api/sensor-data/<stage>', methods=['GET', 'POST'])
 @login_required
-def get_sensor_data():
-    temperature = request.args.get('temperature', type=float, default=35.0)
-    moisture = request.args.get('moisture', type=int, default=80)
-    gas = request.args.get('gas', type=int, default=500)
-    
-    # Define thresholds
-    temp_range = "22°C - 28°C"
-    moisture_range = "50% - 70%"
-    gas_range = "Below 400 ppm"
+def get_sensor_data(stage=None):
+    # Define optimal ranges based on stage
+    optimal_ranges = {
+        'early': {
+            'temperature': {'min': 32, 'max': 35},
+            'humidity': {'min': 60, 'max': 70},
+            'gas': {'max': 400}
+        },
+        'mid': {
+            'temperature': {'min': 29, 'max': 32},
+            'humidity': {'min': 55, 'max': 65},
+            'gas': {'max': 400}
+        },
+        'late': {
+            'temperature': {'min': 26, 'max': 29},
+            'humidity': {'min': 50, 'max': 60},
+            'gas': {'max': 400}
+        }
+    }
 
+    # If no stage provided, use 'mid' as default
+    if not stage:
+        stage = 'mid'
+
+    # Handle both GET and POST requests
+    if request.method == 'POST':
+        # Get data from POST request
+        data = request.get_json()
+        temperature = float(data.get('temperature', 30.0))
+        humidity = int(data.get('humidity', 65))
+        gas = int(data.get('gas', 300))
+    else:
+        # Get data from GET parameters
+        temperature = request.args.get('temperature', type=float, default=30.0)
+        humidity = request.args.get('humidity', type=int, default=65)
+        gas = request.args.get('gas', type=int, default=300)
+    
+    ranges = optimal_ranges[stage]
+    
     # Check status and send alerts if needed
-    if temperature < 22 or temperature > 28:
-        send_alert_email("Temperature", f"{temperature}°C", temp_range)
+    if temperature < ranges['temperature']['min'] or temperature > ranges['temperature']['max']:
+        send_alert_email("Temperature", f"{temperature}°C", 
+                        f"{ranges['temperature']['min']}-{ranges['temperature']['max']}°C")
     
-    if moisture < 50 or moisture > 70:
-        send_alert_email("Moisture", f"{moisture}%", moisture_range)
+    if humidity < ranges['humidity']['min'] or humidity > ranges['humidity']['max']:
+        send_alert_email("Humidity", f"{humidity}%", 
+                        f"{ranges['humidity']['min']}-{ranges['humidity']['max']}%")
     
-    if gas > 400:
-        send_alert_email("Gas", f"{gas} ppm", gas_range)
+    if gas > ranges['gas']['max']:
+        send_alert_email("Gas", f"{gas} ppm", 
+                        f"Below {ranges['gas']['max']} ppm")
     
     data = {
         "temperature": temperature,
-        "moisture": moisture,
+        "humidity": humidity,
         "gas": gas,
         "status": {
-            "temperature": "normal" if 22 <= temperature <= 28 else "warning",
-            "moisture": "normal" if 50 <= moisture <= 70 else "warning",
-            "gas": "normal" if gas <= 400 else "warning"
+            "temperature": "normal" if ranges['temperature']['min'] <= temperature <= ranges['temperature']['max'] else "warning",
+            "humidity": "normal" if ranges['humidity']['min'] <= humidity <= ranges['humidity']['max'] else "warning",
+            "gas": "normal" if gas <= ranges['gas']['max'] else "warning"
         }
     }
     return jsonify(data)
 
+@app.route('/toggle_control/<stage>', methods=['POST'])
+@login_required
+def toggle_control(stage):
+    try:
+        state = request.json.get('state', False)
+        value = 1 if state else 2
+        
+        # Map stages to different ThingSpeak fields
+        field_mapping = {
+            'early': 'field1',
+            'mid': 'field2',
+            'late': 'field3'
+        }
+        
+        if stage not in field_mapping:
+            return jsonify({'success': False, 'error': 'Invalid stage'}), 400
+            
+        params = {
+            'api_key': OUTPUT_WRITE_API_KEY,
+            field_mapping[stage]: value
+        }
+        
+        response = requests.get(WRITE_URL, params=params)
+        if response.status_code == 200:
+            return jsonify({'success': True, 'state': state, 'value': value})
+        else:
+            return jsonify({'success': False, 'error': 'Failed to update ThingSpeak'}), 400
+            
+    except Exception as e:
+        print(f"Error in toggle_control for {stage} stage: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
